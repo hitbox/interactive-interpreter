@@ -11,6 +11,12 @@ class Textbox(object):
 
     def clear(self):
         self.value = ''
+        self.position = 0
+
+    def last_line(self):
+        if not self.value:
+            return ''
+        return self.value.splitlines()[-1]
 
     def move_end(self):
         self.position = len(self.value)

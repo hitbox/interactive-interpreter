@@ -1,7 +1,9 @@
+import io
+
 import pygame as pg
 
 from .. import draw
-from ..console import Console
+from ..console import StreamConsole
 from ..engine import g
 from ..join import top2bottom
 
@@ -17,7 +19,10 @@ class SpriteConsole(Sprite):
         self.spritetextbox = SpriteTextbox(size)
         self.spritetextbox.position = dict(midbottom=(g.screen.rect.centerx, g.screen.rect.bottom - 10))
 
-        self.console = Console(self.spritetextbox, locals=locals)
+        self.resetconsole()
+
+    def resetconsole(self):
+        self.console = StreamConsole(io.StringIO(), locals=locals())
 
     @property
     def image(self):
@@ -28,7 +33,15 @@ class SpriteConsole(Sprite):
         return self.spritetextbox.rect
 
     def on_keydown(self, event):
-        self.console.on_keydown(event)
+        self.spritetextbox.on_keydown(event)
+        if event.key == pg.K_RETURN:
+            more = self.console.push(self.spritetextbox.textbox.last_line())
+            if not more:
+                # XXX: how to make this behave like std{err,out}?
+                self.spritetextbox.textbox.write(self.console.stream.getvalue() + "\n")
+                self.resetconsole()
+                return
+        print(self.console.buffer)
 
     def update(self):
         self.spritetextbox.update()

@@ -37,19 +37,17 @@ class SpriteTextbox(Sprite):
             rect = pg.Rect(x, y, w, h)
             rects.append(rect)
             x += w
-        if rects:
-            caret_rect = rects[self.textbox.position-1]
-            textimage.blit(self.caret.image, caret_rect)
-
         rect = self.rect.copy()
         if rect.height < textrect.height:
             rect.height = textrect.height
 
         final = pg.Surface(rect.size, pg.SRCALPHA)
-
-        #position = textimage.get_rect(bottomleft=final.get_rect().bottomleft)
-        #final.blit(textimage, position)
         final.blit(textimage, (0,0))
+
+        if rects:
+            caret_rect = rects[self.textbox.position-1]
+            caret_rect = caret_rect.move(caret_rect.width, 0)
+            final.blit(self.caret.image, caret_rect)
 
         return final
 

@@ -5,13 +5,16 @@ import sys
 
 import pygame as pg
 
-class StreamedConsole(code.InteractiveInterpreter):
+class StreamConsole(code.InteractiveInterpreter):
+    """
+    Console that writes stdout of runsource to a string, `stream`.
+    """
 
-    def __init__(self, output, locals=None, filename="<console>"):
+    def __init__(self, stream, locals=None, filename="<console>"):
         super().__init__(locals)
         self.filename = filename
         self.resetbuffer()
-        self.output = output
+        self.stream = stream
 
     def push(self, line):
         self.buffer.append(line)
@@ -22,7 +25,7 @@ class StreamedConsole(code.InteractiveInterpreter):
 
         if not more:
             self.resetbuffer()
-            self.output.write(temp.getvalue())
+            self.write(temp.getvalue().rstrip("\n"))
         return more
 
     def resetbuffer(self):
@@ -32,4 +35,4 @@ class StreamedConsole(code.InteractiveInterpreter):
         return "\n".join(self.buffer)
 
     def write(self, data):
-        self.output.write(data)
+        self.stream.write(data)
