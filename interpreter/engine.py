@@ -45,3 +45,4 @@ class Engine(object):
             self.screen.clear()
             self.scene.draw(self.screen.display)
             self.screen.flip()
+        print('engine shut down')

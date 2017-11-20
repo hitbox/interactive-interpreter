@@ -4,8 +4,8 @@ from . import join
 
 class Font(object):
 
-    def __init__(self, size=32, color=(255,255,255)):
-        self._font = pg.font.Font(None, size)
+    def __init__(self, size=20, color=(255,255,255)):
+        self._font = pg.font.SysFont("Consolas, DejaVu Sans Mono, Courier New", size)
         self.color = color
         self.antialias = True
         self.empty = pg.Surface((0,0))

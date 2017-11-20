@@ -1,14 +1,14 @@
 import pygame as pg
 
-from ..engine import g
+from .. import draw
 from ..console import Console
+from ..engine import g
+from ..join import top2bottom
+
 from .base import Sprite
 from .textbox import SpriteTextbox
-from .text import Text
 
 class SpriteConsole(Sprite):
-
-    # XXX: subclass this as Sprite, InteractiveInterpreter all the way down?
 
     def __init__(self, locals=None):
         super().__init__()
@@ -19,11 +19,9 @@ class SpriteConsole(Sprite):
 
         self.console = Console(self.spritetextbox, locals=locals)
 
-        self.stderr = Text()
-
     @property
     def image(self):
-        return self.spritetextbox.image
+        return draw.border(self.spritetextbox.image)
 
     @property
     def rect(self):

@@ -14,3 +14,6 @@ class Text(Sprite):
     @property
     def image(self):
         return self.font.render(self.value)
+
+    def write(self, data):
+        self.value += data
