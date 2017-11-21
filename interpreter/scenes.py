@@ -55,7 +55,6 @@ class ReadlineScene(Group):
         if event.action != "readline":
             return
 
-        # XXX: almost there! it seems to be putting extra space between lines
         image = self.font.render(self.readline.prompt + event.value)
         position = dict(topleft=self.readline.rect.topleft)
         self.add(BakedSprite(image, self, position=position))
@@ -66,7 +65,6 @@ class ReadlineScene(Group):
             self.readline.render()
         else:
             output = self.console.stream.getvalue()
-            print(('output', output))
             if output:
                 image = self.font.render(self.readline.prompt + output)
                 position = dict(topleft=self.readline.rect.bottomleft)
@@ -76,14 +74,5 @@ class ReadlineScene(Group):
             self.readline.prompt = ">>> "
             self.readline.render()
 
-        self.readline.rect.topleft = self.readline.rect.bottomleft
-        self.readline.rect.topleft = self.readline.rect.bottomleft
-
-        if False and len(self.lines) > 1:
-            print((self, self.lines))
-            first = self.lines[0]
-            first.rect.topleft = self.topleft
-            for line1, line2 in zip(self.lines[:-1], self.lines[1:]):
-                line2.rect.topleft = line1.rect.bottomleft
-
-            #self.readline.rect.topleft = line2.rect.bottomleft
+        last = self.sprites()[-1]
+        self.readline.rect.topleft = last.rect.bottomleft
