@@ -12,7 +12,8 @@ window.set_position(display_rect.topleft)
 
 screen = screen.Screen(display_rect.size)
 
-from .scenes import ConsoleScene
+from .scenes import ConsoleScene, ReadlineScene
 
 e = Engine(screen)
-e.run(ConsoleScene(dict(g=g)))
+#e.run(ConsoleScene(dict(g=g)))
+e.run(ReadlineScene())

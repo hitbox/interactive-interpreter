@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import pygame as pg
 
 from .clock import Clock
@@ -10,6 +12,9 @@ class g:
     screen = None
 
 
+def ReadlineEvent(value):
+    return pg.event.Event(pg.USEREVENT, action="readline", value=value)
+
 class Engine(object):
 
     def __init__(self, screen):
@@ -19,9 +24,18 @@ class Engine(object):
         pg.key.set_repeat(150, 50)
         self.is_running = False
 
+        self.listeners = defaultdict(list)
+
+    def emit(self, event):
+        pg.event.post(event)
+
     def handle(self, event):
         if event.type == pg.QUIT:
             self.is_running = False
+        elif event.type == pg.USEREVENT:
+            if event.type in self.listeners:
+                for callback in self.listeners[event.type]:
+                    callback(event)
         elif event.type == pg.KEYDOWN:
 
             # TODO: handle keydown that quits better
@@ -32,6 +46,9 @@ class Engine(object):
                 for sprite in self.scene.sprites():
                     if hasattr(sprite, 'on_keydown'):
                         sprite.on_keydown(event)
+
+    def listen(self, type, f):
+        self.listeners[type].append(f)
 
     def run(self, scene):
         self.scene = scene
