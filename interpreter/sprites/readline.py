@@ -1,6 +1,5 @@
 import pygame as pg
 
-from .. import draw
 from ..engine import g, ReadlineEvent
 from ..font import Font
 from ..textbox import Textbox
@@ -16,7 +15,6 @@ class ReadlineSprite(Sprite):
         self.prompt = prompt
 
         size = self.font.size("X")
-        print(('size', size))
         self.rect = pg.Rect((0,0),size)
 
         self.active = True
@@ -29,7 +27,7 @@ class ReadlineSprite(Sprite):
             return
 
         if event.key == pg.K_RETURN:
-            g.engine.emit(ReadlineEvent(value=self.textbox.value))
+            g.engine.emit(ReadlineEvent(self.textbox.value))
             self.textbox.clear()
         elif event.key == pg.K_BACKSPACE:
             self.textbox.backspace()
@@ -41,6 +39,5 @@ class ReadlineSprite(Sprite):
 
     def render(self):
         image = self.font.render(self.prompt + self.textbox.value)
-        #draw.border(image)
         self.image = image
         return image
