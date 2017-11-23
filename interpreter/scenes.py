@@ -7,7 +7,7 @@ from .font import Font
 from .group import Group
 from .console import StreamConsole
 
-from .sprites import BakedSprite, ReadlineSprite
+from .sprites import BakedSprite, FramesPerSecondSprite, ReadlineSprite
 
 class ReadlineScene(Group):
 
@@ -17,43 +17,85 @@ class ReadlineScene(Group):
         self.lines = []
         self.font = Font()
 
-        self.readline = ReadlineSprite(">>> ")
-        self.topleft = (g.screen.rect.left + 10, g.screen.rect.top + self.readline.rect.height + 10)
-        self.readline.rect.topleft = self.topleft
-        self.add(self.readline)
+        self.padding = 10
 
-        self.console = StreamConsole(io.StringIO())
+        self.readlinesprite = ReadlineSprite(">>> ")
+
+        add_history = self.readlinesprite.readline.history.add
+        for command in ["dir()", "s.rect.topright = fps.rect.topright"]:
+            add_history(command)
+
+        topleft = (g.screen.rect.left + self.padding,
+                   g.screen.rect.top + self.padding)
+        self.readlinesprite.rect.topleft = topleft
+        self.add(self.readlinesprite)
+        self.bakes = []
+        self.reverse = []
+
+        fps = FramesPerSecondSprite()
+        fps.rect.topright = g.screen.rect.topright
+
+        s = BakedSprite(fps.image.copy())
+        s.image.fill((255,25,25))
+        s.rect.center = g.screen.rect.center
+
+        self.add(s, fps)
+
+        ctx = dict(g=g, screen=g.screen, engine=g.engine, scene=self,
+                   BakedSprite=BakedSprite, pg=pg, s=s, bakes=self.bakes,
+                   FramesPerSecondSprite=FramesPerSecondSprite, fps=fps,
+                   quit=g.engine.stop)
+        self.console = StreamConsole(io.StringIO(), locals=ctx)
+
+        # XXX: quick-dirty banner
+        #      uses self.readlinesprite's rect to start
+        self._bake_output("Pygame Interactive Interpreter")
+        self._bake_output("Close window or `engine.stop()` or `quit()` to quit")
+        self.readlinesprite.rect.topleft = self.bakes[-1].rect.bottomleft
 
         g.engine.listen(pg.USEREVENT, self.on_userevent)
 
-    def lastline(self):
-        if self.lines:
-            return self.lines[-1]
+    def _bake_output(self, text):
+        if self.bakes:
+            last_bake = self.bakes[-1]
+            position = dict(topleft=last_bake.rect.bottomleft)
         else:
-            return self.readline
+            position = dict(topleft=self.readlinesprite.rect.topleft)
+        baked = BakedSprite(self.font.render(text), self, position=position)
+        self.add(baked)
+        self.bakes.append(baked)
+        self.reverse.insert(0, baked)
+
+    def _reflow_up(self):
+        self.bakes[-1].rect.bottomleft = self.readlinesprite.rect.topleft
+        for b1, b2 in zip(self.reverse[:-1], self.reverse[1:]):
+            b2.rect.bottomleft = b1.rect.topleft
 
     def on_userevent(self, event):
         if event.action != "readline":
             return
+        # a line has been read by readlinesprite
 
-        image = self.font.render(self.readline.prompt + event.value)
-        position = dict(topleft=self.readline.rect.topleft)
-        self.add(BakedSprite(image, self, position=position))
+        self._bake_output(self.readlinesprite.prompt + event.value)
 
         more = self.console.push(event.value)
         if more:
-            self.readline.prompt = "... "
-            self.readline.render()
+            self.readlinesprite.prompt = "... "
+            self.readlinesprite.render()
         else:
+            # console consumed whatever was given
             output = self.console.stream.getvalue()
             if output:
-                image = self.font.render(self.readline.prompt + output)
-                position = dict(topleft=self.readline.rect.bottomleft)
-                self.add(BakedSprite(image, self, position=position))
+                print(output) # re-echo stdout
                 self.console.stream = io.StringIO()
+                self._bake_output(self.readlinesprite.prompt + output)
+            self.readlinesprite.readline.history.add(event.value)
+            self.readlinesprite.prompt = ">>> "
+            self.readlinesprite.render()
 
-            self.readline.prompt = ">>> "
-            self.readline.render()
+        last_bake = self.bakes[-1]
+        self.readlinesprite.rect.topleft = last_bake.rect.bottomleft
 
-        last = self.sprites()[-1]
-        self.readline.rect.topleft = last.rect.bottomleft
+        if self.readlinesprite.rect.bottom > g.screen.rect.bottom:
+            self.readlinesprite.rect.bottom = g.screen.rect.bottom - self.padding
+            self._reflow_up()

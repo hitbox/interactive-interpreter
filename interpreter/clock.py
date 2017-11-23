@@ -6,5 +6,8 @@ class Clock(object):
         self._clock = pg.time.Clock()
         self.framerate = framerate
 
+    def get_fps(self):
+        return self._clock.get_fps()
+
     def tick(self):
         return self._clock.tick(self.framerate)

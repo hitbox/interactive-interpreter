@@ -14,8 +14,7 @@ class Font(object):
         if not text:
             return self.empty
         lines = text.splitlines()
-        images = [self._font.render(line, self.antialias, self.color)
-                  for line in lines]
+        images = [self._font.render(line, self.antialias, self.color) for line in lines]
         return join.top2bottom(images)
 
     def size(self, text):

@@ -1,9 +1,6 @@
 import code
 import contextlib
 import io
-import sys
-
-import pygame as pg
 
 class StreamConsole(code.InteractiveInterpreter):
     """
