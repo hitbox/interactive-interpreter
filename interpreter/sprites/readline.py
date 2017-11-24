@@ -9,7 +9,7 @@ from .caret import CaretSprite
 
 class ReadlineSprite(Sprite):
 
-    def __init__(self, prompt):
+    def __init__(self, prompt, inside):
         super().__init__()
 
         self.font = Font()
@@ -22,13 +22,9 @@ class ReadlineSprite(Sprite):
         self.readline = Readline()
 
         self.caret = CaretSprite()
+        self.inside = inside
 
         self.render()
-
-        # TODO: print a banner
-        #       wrap text
-        #       move cursor/caret with arrow keys
-        #       history
 
     def on_keydown(self, event):
         if not self.active:
@@ -57,7 +53,7 @@ class ReadlineSprite(Sprite):
         self.rect.size = self.image.get_size()
 
     def render(self):
-        final = self.font.render(self.text)
+        final = self.font.render(self.text, self.inside)
         self.image = final
         return final
 

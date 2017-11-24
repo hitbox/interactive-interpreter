@@ -19,7 +19,7 @@ class ReadlineScene(Group):
 
         self.padding = 10
 
-        self.readlinesprite = ReadlineSprite(">>> ")
+        self.readlinesprite = ReadlineSprite(">>> ", g.screen.rect)
 
         add_history = self.readlinesprite.readline.history.add
         for command in ["dir()", "s.rect.topright = fps.rect.topright"]:
@@ -61,7 +61,8 @@ class ReadlineScene(Group):
             position = dict(topleft=last_bake.rect.bottomleft)
         else:
             position = dict(topleft=self.readlinesprite.rect.topleft)
-        baked = BakedSprite(self.font.render(text), self, position=position)
+        image = self.font.render(text, g.screen.rect)
+        baked = BakedSprite(image, self, position=position)
         self.add(baked)
         self.bakes.append(baked)
         self.reverse.insert(0, baked)

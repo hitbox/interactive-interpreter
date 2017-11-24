@@ -12,9 +12,6 @@ class g:
     screen = None
 
 
-# XXX: * emit from Readline class?
-#      * an EngineShutdown event to save history
-
 def ReadlineEvent(value):
     return pg.event.Event(pg.USEREVENT, action="readline", value=value)
 
@@ -39,7 +36,6 @@ class Engine(object):
             if event.type in self.listeners:
                 for callback in self.listeners[event.type]:
                     callback(event)
-        # TODO: only one control/input should recieve key events?
         elif event.type == pg.KEYDOWN:
             for sprite in self.scene.sprites():
                 if hasattr(sprite, 'on_keydown'):

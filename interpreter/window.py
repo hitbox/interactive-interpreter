@@ -15,4 +15,7 @@ def set_position(position):
     `pygame.display.set_mode`.
     """
     x, y = position
-    os.environ['SDL_VIDEO_WINDOW_POS'] = '%d,%d' % (x, y)
+    os.environ["SDL_VIDEO_WINDOW_POS"] = "%d,%d" % (x, y)
+
+def centered():
+    os.environ["SDL_VIDEO_CENTERED"] = "1"
