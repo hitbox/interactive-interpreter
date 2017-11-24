@@ -16,6 +16,8 @@ Development
 
 ## TODO
 
+* history up/down not working properly
+* clear screen
 * `ReadlineScene` moved to an "object" that can put anywhere
 * toggle console (like Kuake for KDE)
 * syntax highlighting

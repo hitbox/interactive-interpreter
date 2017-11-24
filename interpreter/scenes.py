@@ -17,6 +17,8 @@ class ReadlineScene(Group):
         self.lines = []
         self.font = Font()
 
+        self.inside = g.screen.rect.inflate(-100, -100)
+
         self.padding = 10
 
         self.readlinesprite = ReadlineSprite(">>> ", g.screen.rect)
@@ -60,8 +62,8 @@ class ReadlineScene(Group):
             last_bake = self.bakes[-1]
             position = dict(topleft=last_bake.rect.bottomleft)
         else:
-            position = dict(topleft=self.readlinesprite.rect.topleft)
-        image = self.font.render(text, g.screen.rect)
+            position = dict(topleft=self.inside.topleft)
+        image = self.font.render(text, self.inside)
         baked = BakedSprite(image, self, position=position)
         self.add(baked)
         self.bakes.append(baked)
