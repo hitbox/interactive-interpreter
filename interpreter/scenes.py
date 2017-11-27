@@ -21,7 +21,7 @@ class ReadlineScene(Group):
 
         self.padding = 10
 
-        self.readlinesprite = ReadlineSprite(">>> ", g.screen.rect)
+        self.readlinesprite = ReadlineSprite(">>> ", self.inside)
 
         add_history = self.readlinesprite.readline.history.add
         for command in ["dir()", "s.rect.topright = fps.rect.topright"]:
@@ -52,7 +52,7 @@ class ReadlineScene(Group):
         # XXX: quick-dirty banner
         #      uses self.readlinesprite's rect to start
         self._bake_output("Pygame Interactive Interpreter")
-        self._bake_output("Close window or `engine.stop()` or `quit()` to quit")
+        self._bake_output("Close window or `engine.stop()` or `quit()` or CTRL+D to quit")
         self.readlinesprite.rect.topleft = self.bakes[-1].rect.bottomleft
 
         g.engine.listen(pg.USEREVENT, self.on_userevent)
@@ -89,7 +89,6 @@ class ReadlineScene(Group):
             # console consumed whatever was given
             output = self.console.stream.getvalue()
             if output:
-                print(output) # re-echo stdout
                 self.console.stream = io.StringIO()
                 self._bake_output(self.readlinesprite.prompt + output)
             self.readlinesprite.readline.history.add(event.value)

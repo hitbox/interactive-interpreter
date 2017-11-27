@@ -7,7 +7,7 @@ import pygame as pg
 pg.display.init()
 
 from interpreter.console import StreamConsole
-from interpreter.textbox import Textbox
+from interpreter.sprites import ReadlineSprite
 
 def keydown_event(data):
     return pg.event.Event(pg.KEYDOWN, data)
@@ -37,11 +37,11 @@ class TestTextboxConsole(unittest.TestCase):
     def setUp(self):
         self.console_output = io.StringIO()
         self.console = StreamConsole(self.console_output, locals=dict())
-        self.textbox = Textbox()
+        self.rlsprite = ReadlineSprite(">>>", pg.Rect(0,0,0,0))
 
     def _keydown_hook(self, event):
-        "Send pygame keydown events to the textbox as strings."
-        self.textbox.write(event.unicode)
+        "Send pygame keydown events to the rlsprite as strings."
+        self.rlsprite.write(event.unicode)
 
     def _pygame_event_loop(self, events, return_hook, keydown_hook=None):
         """
@@ -53,7 +53,7 @@ class TestTextboxConsole(unittest.TestCase):
                        text2events.
         :param return_hook: Called when return is pressed.
         :param keydown_hook: Optional. Called on every keydown event. Defaults
-                             to writing the unicode attribute to the textbox.
+                             to writing the unicode attribute to the rlsprite.
         """
         if keydown_hook is None:
             keydown_hook = self._keydown_hook
@@ -62,8 +62,9 @@ class TestTextboxConsole(unittest.TestCase):
         for simulated_event in events:
             pg.event.post(simulated_event)
             for event in pg.event.get():
+                print(event)
                 if event.type == pg.KEYDOWN:
-                    keydown_hook(event)
+                    self.rlsprite.on_keydown(event)
                     if event.key == pg.K_RETURN:
                         return_hook(event)
 
@@ -83,7 +84,7 @@ class TestTextboxConsole(unittest.TestCase):
             A return hook that verifies the number of more console pushes
             occurs and the console_output.
             """
-            more = self.console.push(self.textbox.last_line())
+            more = self.console.push(self.rlsprite.readline.value)
             self.assertEqual(bool(self.nmore), more)
             self.nmore -= 1
             # nmore goes below zero for zero expected mores

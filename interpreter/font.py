@@ -3,6 +3,9 @@ import pygame as pg
 from . import join
 
 class Wrapper:
+    """
+    As-in wrapping text around when it exceeds a width.
+    """
 
     def __init__(self):
         self._cache = {}
