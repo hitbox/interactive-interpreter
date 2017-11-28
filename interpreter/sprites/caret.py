@@ -1,8 +1,8 @@
 import pygame as pg
 
 from .. import draw
-from ..globals import g
 from ..font import Font
+from ..globals import g
 
 from .base import Sprite
 
@@ -18,12 +18,14 @@ class CaretSprite(Sprite):
         self.show = True
 
         self.font = Font()
-        size = self.font.size(" ")
+        w, h = self.font.size(" ")
+        # adding width to achieve a cheap offset to not cover characters.
+        size = w+4, h
 
         self.images = {False: pg.Surface(size, pg.SRCALPHA),
                        True: pg.Surface(size, pg.SRCALPHA)}
 
-        show_image = self.images[True]
+        show_image = self.images[self.show]
         draw.borderright(show_image, self.font.color, 2)
 
         self.image = self.images[self.show]
