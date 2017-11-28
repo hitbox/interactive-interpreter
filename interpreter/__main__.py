@@ -1,20 +1,8 @@
 import pygame as pg
 
-from . import window
-from .screen import Screen
+from . import screen
 from .engine import Engine
-
-# set window aligned midright to desktop
-desktop_rect = window.get_desktop_rect()
-display_rect = pg.Rect(0,0,1000,900)
-display_rect.midright = desktop_rect.midright
-display_rect.left -= 10
-
-window.set_position(display_rect.topleft)
-
-display = Screen(display_rect.size)
-
 from .scenes import ReadlineScene
 
-e = Engine(display)
+e = Engine(screen.desktop_aligned((1000,900), position=dict(midright="midright")))
 e.run(ReadlineScene())

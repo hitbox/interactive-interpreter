@@ -9,7 +9,10 @@ from .console import StreamConsole
 
 from .sprites import BakedSprite, FramesPerSecondSprite, ReadlineSprite
 
-class ReadlineScene(Group):
+class BaseScene(Group):
+    pass
+
+class ReadlineScene(BaseScene):
 
     def __init__(self):
         super().__init__()

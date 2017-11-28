@@ -24,14 +24,9 @@ class Engine(object):
     def handle(self, event):
         if event.type == pg.QUIT:
             self.is_running = False
-        elif event.type == pg.USEREVENT:
-            if event.type in self.listeners:
-                for callback in self.listeners[event.type]:
-                    callback(event)
-        elif event.type == pg.KEYDOWN:
-            for sprite in self.scene.sprites():
-                if hasattr(sprite, 'on_keydown'):
-                    sprite.on_keydown(event)
+        elif event.type in self.listeners:
+            for callback in self.listeners[event.type]:
+                callback(event)
 
     def listen(self, type, f):
         self.listeners[type].append(f)

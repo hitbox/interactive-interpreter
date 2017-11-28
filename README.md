@@ -16,6 +16,9 @@ Development
 
 ## TODO
 
+* get moving sprites working and...
+* fix interpreter scene to work with simpler engine event dispatcher (broke it with debugging/moving_sprites.py)
+
 * `ReadlineScene` moved to an "object" that can put anywhere (or a general reorganizing and cleanup)
 * clear screen
 * toggle console (like Kuake for KDE)
