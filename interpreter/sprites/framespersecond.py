@@ -1,6 +1,6 @@
 import pygame as pg
 
-from ..engine import g
+from ..globals import g
 from ..font import Font
 
 from .base import Sprite

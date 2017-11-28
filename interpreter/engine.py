@@ -3,17 +3,9 @@ from collections import defaultdict
 import pygame as pg
 
 from .clock import Clock
+from .events import ReadlineEvent
+from .globals import g
 from .screen import Screen
-
-class g:
-
-    clock = None
-    engine = None
-    screen = None
-
-
-def ReadlineEvent(action, value):
-    return pg.event.Event(pg.USEREVENT, subtype="readline", action=action, value=value)
 
 class Engine(object):
 

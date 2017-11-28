@@ -1,7 +1,8 @@
 import pygame as pg
 
-from ..engine import g, ReadlineEvent
+from ..events import ReadlineEvent
 from ..font import Font
+from ..globals import g
 from ..readline import Readline
 
 from .base import Sprite

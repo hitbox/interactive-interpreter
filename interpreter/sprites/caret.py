@@ -1,17 +1,20 @@
 import pygame as pg
 
 from .. import draw
-from ..engine import g
+from ..globals import g
 from ..font import Font
 
 from .base import Sprite
 
 class CaretSprite(Sprite):
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *groups, timer=500):
+        """
+        :params timer: time in ms, to blink on/off.
+        """
+        super().__init__(*groups)
         self.elapsed = 0
-        self.timer = 500
+        self.timer = timer
         self.show = True
 
         self.font = Font()

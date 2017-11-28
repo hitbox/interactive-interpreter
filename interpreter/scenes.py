@@ -2,7 +2,7 @@ import io
 
 import pygame as pg
 
-from .engine import g
+from .globals import g
 from .font import Font
 from .group import Group
 from .console import StreamConsole
