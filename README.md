@@ -16,11 +16,9 @@ Development
 
 ## TODO
 
-* history up/down not working properly
+* `ReadlineScene` moved to an "object" that can put anywhere (or a general reorganizing and cleanup)
 * clear screen
-* `ReadlineScene` moved to an "object" that can put anywhere
 * toggle console (like Kuake for KDE)
 * syntax highlighting
 * only one input control should recieve key events
-* save history of readline
 * engine shutdown event
