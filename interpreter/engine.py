@@ -12,8 +12,8 @@ class g:
     screen = None
 
 
-def ReadlineEvent(value):
-    return pg.event.Event(pg.USEREVENT, action="readline", value=value)
+def ReadlineEvent(action, value):
+    return pg.event.Event(pg.USEREVENT, subtype="readline", action=action, value=value)
 
 class Engine(object):
 

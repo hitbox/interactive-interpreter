@@ -80,7 +80,7 @@ class ReadlineSprite(Sprite):
 
     def submit(self):
         value = self.readline.submit()
-        g.engine.emit(ReadlineEvent(value))
+        g.engine.emit(ReadlineEvent("submit", value))
         return value
 
     @property
@@ -95,3 +95,4 @@ class ReadlineSprite(Sprite):
 
     def write(self, data):
         self.readline.write(data)
+        g.engine.emit(ReadlineEvent("write", data))

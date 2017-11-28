@@ -74,30 +74,34 @@ class ReadlineScene(Group):
         for b1, b2 in zip(self.reverse[:-1], self.reverse[1:]):
             b2.rect.bottomleft = b1.rect.topleft
 
-    def on_userevent(self, event):
-        if event.action != "readline":
-            return
-        # a line has been read by readlinesprite
-
-        self._bake_output(self.readlinesprite.prompt + event.value)
-
-        more = self.console.push(event.value)
-        if more:
-            self.readlinesprite.prompt = "... "
-            self.readlinesprite.render()
-        else:
-            # console consumed whatever was given
-            output = self.console.stream.getvalue()
-            if output:
-                self.console.stream = io.StringIO()
-                self._bake_output(self.readlinesprite.prompt + output)
-            self.readlinesprite.readline.history.add(event.value)
-            self.readlinesprite.prompt = ">>> "
-            self.readlinesprite.render()
-
-        last_bake = self.bakes[-1]
-        self.readlinesprite.rect.topleft = last_bake.rect.bottomleft
-
+    def _keep_readline_on_screen(self):
         if self.readlinesprite.rect.bottom > g.screen.rect.bottom:
             self.readlinesprite.rect.bottom = g.screen.rect.bottom - self.padding
             self._reflow_up()
+
+    def on_userevent(self, event):
+        if event.subtype != "readline":
+            return
+
+        if event.action == "submit":
+            # a line has been read by readlinesprite
+            self._bake_output(self.readlinesprite.prompt + event.value)
+
+            more = self.console.push(event.value)
+            if more:
+                self.readlinesprite.prompt = "... "
+                self.readlinesprite.render()
+            else:
+                # console consumed whatever was given
+                output = self.console.stream.getvalue()
+                if output:
+                    self.console.stream = io.StringIO()
+                    self._bake_output(self.readlinesprite.prompt + output)
+                self.readlinesprite.readline.history.add(event.value)
+                self.readlinesprite.prompt = ">>> "
+                self.readlinesprite.render()
+
+            last_bake = self.bakes[-1]
+            self.readlinesprite.rect.topleft = last_bake.rect.bottomleft
+
+        self._keep_readline_on_screen()
