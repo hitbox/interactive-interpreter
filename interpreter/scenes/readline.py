@@ -2,60 +2,47 @@ import io
 
 import pygame as pg
 
-from .globals import g
-from .font import Font
-from .group import Group
-from .console import StreamConsole
+from ..console import StreamConsole
+from ..font import Font
+from ..globals import g
+from ..sprites import BakedSprite, ReadlineSprite
 
-from .sprites import BakedSprite, FramesPerSecondSprite, ReadlineSprite
-
-class BaseScene(Group):
-    pass
+from .base import BaseScene
 
 class ReadlineScene(BaseScene):
 
-    def __init__(self):
+    banner = ("Pygame Interactive Interpreter\n"
+              "Close window or `engine.stop()` or `quit()` or CTRL+D to quit")
+
+    def __init__(self, inside, context=None, banner=None):
+        """
+        :param inside: rect to keep console in.
+        :param context: console locals.
+        :param banner: override default banner.
+        """
         super().__init__()
 
         self.lines = []
         self.font = Font()
 
-        self.inside = g.screen.rect.inflate(-100, -100)
-
-        self.padding = 10
+        self.inside = inside
 
         self.readlinesprite = ReadlineSprite(">>> ", self.inside)
 
-        add_history = self.readlinesprite.readline.history.add
-        for command in ["dir()", "s.rect.topright = fps.rect.topright"]:
-            add_history(command)
-
-        topleft = (g.screen.rect.left + self.padding,
-                   g.screen.rect.top + self.padding)
-        self.readlinesprite.rect.topleft = topleft
+        self.readlinesprite.rect.topleft = self.inside.topleft
         self.add(self.readlinesprite)
         self.bakes = []
         self.reverse = []
 
-        fps = FramesPerSecondSprite()
-        fps.rect.topright = g.screen.rect.topright
+        self.console = StreamConsole(io.StringIO(), locals=context)
 
-        s = BakedSprite(fps.image.copy())
-        s.image.fill((255,25,25))
-        s.rect.center = g.screen.rect.center
-
-        self.add(s, fps)
-
-        ctx = dict(g=g, screen=g.screen, engine=g.engine, scene=self,
-                   BakedSprite=BakedSprite, pg=pg, s=s, bakes=self.bakes,
-                   FramesPerSecondSprite=FramesPerSecondSprite, fps=fps,
-                   quit=g.engine.stop)
-        self.console = StreamConsole(io.StringIO(), locals=ctx)
+        if banner is None:
+            banner = self.banner
 
         # XXX: quick-dirty banner
         #      uses self.readlinesprite's rect to start
-        self._bake_output("Pygame Interactive Interpreter")
-        self._bake_output("Close window or `engine.stop()` or `quit()` or CTRL+D to quit")
+        for line in banner.splitlines():
+            self._bake_output(line)
         self.readlinesprite.rect.topleft = self.bakes[-1].rect.bottomleft
 
         g.engine.listen(pg.USEREVENT, self.on_userevent)
@@ -76,10 +63,18 @@ class ReadlineScene(BaseScene):
         self.bakes[-1].rect.bottomleft = self.readlinesprite.rect.topleft
         for b1, b2 in zip(self.reverse[:-1], self.reverse[1:]):
             b2.rect.bottomleft = b1.rect.topleft
+        removes = []
+        for baked in self.bakes:
+            if baked.rect.top < self.inside.top:
+                removes.append(baked)
+        for baked in removes:
+            self.remove(baked)
+            self.bakes.remove(baked)
+            self.reverse.remove(baked)
 
     def _keep_readline_on_screen(self):
-        if self.readlinesprite.rect.bottom > g.screen.rect.bottom:
-            self.readlinesprite.rect.bottom = g.screen.rect.bottom - self.padding
+        if self.readlinesprite.rect.bottom > self.inside.bottom:
+            self.readlinesprite.rect.bottom = self.inside.bottom
             self._reflow_up()
 
     def on_userevent(self, event):
@@ -99,7 +94,7 @@ class ReadlineScene(BaseScene):
                 output = self.console.stream.getvalue()
                 if output:
                     self.console.stream = io.StringIO()
-                    self._bake_output(self.readlinesprite.prompt + output)
+                    self._bake_output(output)
                 self.readlinesprite.readline.history.add(event.value)
                 self.readlinesprite.prompt = ">>> "
                 self.readlinesprite.render()

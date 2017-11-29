@@ -4,37 +4,31 @@ from operator import ge, le, gt, lt
 class Tween(object):
 
     def __init__(self, start, end, steps):
-        self.start = start
-        self.end = end
-        self.steps = steps
+        self.start = float(start)
+        self.end = float(end)
+        self.steps = float(steps)
 
-        self.start = float(self.start)
-        self.end = float(self.end)
-        self.steps = float(self.steps)
-
-        self.current = self.start
         self.step = fabs(self.start - self.end) / self.steps
+        self.current = self.start
 
-        if self.end < self.start:
+        if self.start < self.end:
+            self.shouldstop = gt
+        elif self.start > self.end:
             self.step *= -1
-            self.cmpfunc = gt
+            self.shouldstop = lt
         else:
-            self.cmpfunc = lt
+            # start and end are equal, we'll stop iteration immediately.
+            self.shouldstop = lambda left, right: True
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        if self.cmpfunc(self.current, self.end):
-            rv = self.current
-            self.current += self.step
-            return rv
-
-        elif self.current != self.end:
-            self.current = self.end
-            return self.end
-
-        raise StopIteration
+        if self.shouldstop(self.current, self.end):
+            raise StopIteration
+        rv = self.current
+        self.current += self.step
+        return rv
 
 
 class TweenColor(object):

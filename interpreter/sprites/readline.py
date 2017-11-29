@@ -2,6 +2,7 @@ import pygame as pg
 
 from ..events import ReadlineEvent
 from ..font import Font
+from ..font import Wrapper
 from ..globals import g
 from ..readline import Readline
 
@@ -25,17 +26,16 @@ class ReadlineSprite(Sprite):
         self.caret = CaretSprite()
         self.inside = inside
 
+        self.wrapper = Wrapper()
+
         self.render()
 
+        g.engine.listen(pg.KEYDOWN, self.on_keydown)
+
     def get_caret_rect(self):
-        crects = [pg.Rect(self.rect.topleft,self.font.size(c)) for c in self.text]
-
-        if len(crects) > 1:
-            for cr1, cr2 in zip(crects[:-1], crects[1:]):
-                cr2.bottomleft = cr1.bottomright
-
-            pos = (len(self.prompt) - 1) + (self.readline.position)
-            return crects[pos]
+        crects = self.wrapper(self.font, self.rect, self.text)
+        pos = (len(self.prompt) - 1) + self.readline.position
+        return crects[pos]
 
     def on_keydown(self, event):
         if not self.active:
@@ -71,12 +71,12 @@ class ReadlineSprite(Sprite):
             self.write(event.unicode)
 
         self.render()
-        self.rect.size = self.image.get_size()
         return rv
 
     def render(self):
         final = self.font.render(self.text, self.inside)
         self.image = final
+        self.rect.size = self.image.get_size()
         return final
 
     def submit(self):

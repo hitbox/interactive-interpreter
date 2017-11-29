@@ -5,7 +5,7 @@ import pygame as pg
 from .clock import Clock
 from .events import ReadlineEvent
 from .globals import g
-from .screen import Screen
+from .screens import Screen
 
 class Engine(object):
 
