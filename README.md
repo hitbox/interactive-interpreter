@@ -30,6 +30,6 @@ Development
 * clear screen
 * toggle console (like Kuake for KDE)
 * syntax highlighting
-* only one input control should recieve key events
+* only one input control should receive key events
 * engine shutdown event
 * add a pager?
