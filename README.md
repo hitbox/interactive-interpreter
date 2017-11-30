@@ -6,7 +6,7 @@ Another attempt of mine to make an interactive interpreter usable in pygame.
 
 ## demo
 
-`python -m interpreter`
+`python -m demos.interpreter`
 
 ## side-by-side interpreter demo
 
