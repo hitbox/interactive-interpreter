@@ -12,7 +12,7 @@ from .base import BaseScene
 class ReadlineScene(BaseScene):
 
     banner = ("Pygame Interactive Interpreter\n"
-              "Close window or `engine.stop()` or `quit()` or CTRL+D to quit")
+              "Close window or `engine.stop()` or `quit()` or CTRL+D to quit.")
 
     def __init__(self, inside, context=None, banner=None):
         """
