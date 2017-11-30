@@ -64,6 +64,9 @@ class Readline(object):
     def move_end(self):
         self.position = len(self.value)
 
+    def move_start(self):
+        self.position = 0
+
     def move_left(self, nchars=1):
         self.position -= nchars
         if self.position < 0:

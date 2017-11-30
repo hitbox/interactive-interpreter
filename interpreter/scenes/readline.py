@@ -94,7 +94,8 @@ class ReadlineScene(BaseScene):
                 output = self.console.stream.getvalue()
                 if output:
                     self.console.stream = io.StringIO()
-                    self._bake_output(output)
+                    for line in output.splitlines():
+                        self._bake_output(line)
                 self.readlinesprite.readline.history.add(event.value)
                 self.readlinesprite.prompt = ">>> "
                 self.readlinesprite.render()

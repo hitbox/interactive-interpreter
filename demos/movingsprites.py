@@ -32,25 +32,27 @@ class MovingSpriteScene(BaseScene):
         self.add(sprite)
 
         fps = FramesPerSecondSprite()
-        fps.rect.topright = leftside.topright
+        fps.rect.topright = (leftside.right - 10, leftside.top + 10)
         self.add(fps)
 
         steps = 60
 
         context = dict(g=g, pg=pg, sprite=sprite, s=sprite, positioned=positioned,
-                       leftside=leftside, rightside=rightside, steps=steps)
+                       leftside=leftside, rightside=rightside, steps=steps,
+                       self=self, MovingSprite=MovingSprite, fps=fps)
 
         banner = ReadlineScene.banner + "\nUp/down for example commands to move the sprite on the right."
         self.subscene = ReadlineScene(leftside.inflate(-100, -100), context, banner=banner)
         pg.draw.rect(g.screen.background,(90,200,90),self.subscene.inside,1)
 
         sprite.rect.center = rightside.center
-        sprite.moveto(positioned(sprite.rect, midright=rightside.midright), steps)
-        sprite.moveto(positioned(sprite.rect, topright=rightside.topright), steps)
-        sprite.moveto(positioned(sprite.rect, topleft=rightside.topleft), steps)
-        sprite.moveto(positioned(sprite.rect, bottomleft=rightside.bottomleft), steps)
-        sprite.moveto(positioned(sprite.rect, bottomright=rightside.bottomright), steps)
-        sprite.moveto(positioned(sprite.rect, center=rightside.center), steps)
+
+        sprite.movetos([positioned(sprite.rect, midright=rightside.midright),
+                        positioned(sprite.rect, topright=rightside.topright),
+                        positioned(sprite.rect, topleft=rightside.topleft),
+                        positioned(sprite.rect, bottomleft=rightside.bottomleft),
+                        positioned(sprite.rect, bottomright=rightside.bottomright),
+                        positioned(sprite.rect, center=rightside.center)], steps)
 
         save = self.subscene.readlinesprite.readline.history.add
 

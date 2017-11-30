@@ -31,6 +31,10 @@ class MovingSprite(Sprite):
         ytween = Tween(lasty, target.y, steps)
         self.paths.appendleft((xtween, ytween))
 
+    def movetos(self, targets, steps):
+        for target in targets:
+            self.moveto(target, steps)
+
     def update_moveto(self):
         hasxtween, hasytween = hasattr(self, "xtween"), hasattr(self, "ytween")
         if hasxtween:

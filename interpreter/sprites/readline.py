@@ -66,6 +66,10 @@ class ReadlineSprite(Sprite):
             self.readline.move_left()
         elif event.key == pg.K_RIGHT:
             self.readline.move_right()
+        elif event.key == pg.K_HOME:
+            self.readline.move_start()
+        elif event.key == pg.K_END:
+            self.readline.move_end()
         # send string through
         else:
             self.write(event.unicode)
