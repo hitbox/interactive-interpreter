@@ -4,6 +4,14 @@
 
 Another attempt of mine to make an interactive interpreter usable in pygame.
 
+## demo
+
+`python -m interpreter`
+
+## side-by-side interpreter demo
+
+`python debugging/moving_sprites.py`
+
 ## Status
 
 Development
@@ -16,7 +24,6 @@ Development
 
 ## TODO
 
-* reflow while typing--readline sprite is going outside it's boundaries.
 * readline scene needs serious cleanup and the idea of a scene is probably a dead end.
 
 * `ReadlineScene` moved to an "object" that can put anywhere (or a general reorganizing and cleanup)
