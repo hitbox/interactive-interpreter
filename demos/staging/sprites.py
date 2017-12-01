@@ -1,5 +1,7 @@
 from collections import deque
 
+import pygame as pg
+
 from interpreter.sprites import Sprite
 from interpreter.tween import Tween
 
@@ -56,3 +58,58 @@ class MovingSprite(Sprite):
 
     def update(self):
         self.update_moveto()
+
+
+class Crosshair(Sprite):
+
+    def __init__(self, size):
+        super().__init__()
+        self.image = pg.Surface(size, pg.SRCALPHA)
+        self.rect = self.image.get_rect()
+        color = (255,0,0)
+        pg.draw.line(self.image, color, self.rect.midtop, self.rect.midbottom)
+        pg.draw.line(self.image, color, self.rect.midleft, self.rect.midright)
+        radius = int(min((self.rect.width, self.rect.height)) / 2)
+        pg.draw.circle(self.image, color, self.rect.center, radius, 1)
+        radius = int(min((self.rect.width, self.rect.height)) / 4)
+        pg.draw.circle(self.image, color, self.rect.center, radius, 1)
+
+
+def huestrip(size):
+    if isinstance(size, pg.Rect):
+        size = size.size
+    surface = pg.Surface(size)
+    width, height = size
+
+    for x in range(width):
+        hue = int(360 * (x / width))
+        color = pg.Color(0)
+        color.hsva = hue, 100, 100, 100
+        pg.draw.line(surface, color, (x, 0), (x, height))
+
+    return surface
+
+def saturationvalue(surface, hue):
+    width, height = surface.get_size()
+
+    for x in range(width):
+        saturation = int(100 * (x / width))
+        for y in range(height):
+            value = int(100 * (y / height))
+            color = pg.Color(0)
+            color.hsva = (hue, saturation, value, 100)
+            surface.set_at((x, height - y - 1), color)
+            yield
+
+def colorsquare(size):
+    if isinstance(size, pg.Rect):
+        size = size.size
+    surface = pg.Surface(size)
+    width, height = size
+
+    for x in range(width):
+        for y in range(height):
+            color = tuple(map(int, (255*(x/width), 255*(y/height), 255)))
+            surface.set_at((x, y), color)
+
+    return surface

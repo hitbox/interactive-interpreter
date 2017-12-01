@@ -27,6 +27,7 @@ Development
 * reflow on any change to readline except removing character
 * stop blinking caret when moving cursor
 * readline scene needs serious cleanup and the idea of a scene is probably a dead end.
+* make reloader work
 
 * Have "sprites" (something with an `update` method) that moves a sprite. This
   way when it's done moving the "mover sprite" is killed and no time is wasted
