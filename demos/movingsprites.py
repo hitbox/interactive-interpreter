@@ -8,7 +8,7 @@ from interpreter.scenes import BaseScene, ReadlineScene
 from interpreter.sprites import FramesPerSecondSprite, Sprite
 from interpreter.utils import positioned
 
-from .staging.sprites import MovingSprite, colorsquare, huestrip, saturationvalue, Crosshair
+from .staging.sprites import Crosshair, MovingSprite, colorsquare, huestrip, saturationvalue
 
 class MovingSpriteScene(BaseScene):
 
@@ -27,7 +27,7 @@ class MovingSpriteScene(BaseScene):
         pg.draw.rect(g.screen.background,(90,90,90),leftside,1)
         pg.draw.rect(g.screen.background,(90,90,90),rightside,1)
 
-        sprite = MovingSprite()
+        self.sprite = sprite = MovingSprite()
         sprite.image = pg.Surface((100, 50))
         sprite.image.fill((200,100,100))
         sprite.rect = sprite.image.get_rect()
@@ -96,6 +96,7 @@ class MovingSpriteScene(BaseScene):
     def load_iterator(self):
         h, s, v, a = self.color.hsva
 
+        h = int(h)
         loader = self.hueloaders[h]
         try:
             next(loader)
@@ -104,6 +105,7 @@ class MovingSpriteScene(BaseScene):
 
     def draw_color_picker(self):
         h, s, v, a = self.color.hsva
+        h = int(h)
         g.screen.background.blit(self.hueimages[h], self.pickerrect)
         self.dirty = False
 
@@ -112,6 +114,7 @@ class MovingSpriteScene(BaseScene):
         self.subscene.draw(surface)
         if self.dirty:
             self.draw_color_picker()
+            self.sprite.image.fill(self.color)
 
     def update(self):
         super().update()
