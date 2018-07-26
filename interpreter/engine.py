@@ -3,17 +3,9 @@ from collections import defaultdict
 import pygame as pg
 
 from .clock import Clock
-from .screen import Screen
-
-class g:
-
-    clock = None
-    engine = None
-    screen = None
-
-
-def ReadlineEvent(value):
-    return pg.event.Event(pg.USEREVENT, action="readline", value=value)
+from .events import ReadlineEvent
+from .globals import g
+from .screens import Screen
 
 class Engine(object):
 
@@ -32,14 +24,9 @@ class Engine(object):
     def handle(self, event):
         if event.type == pg.QUIT:
             self.is_running = False
-        elif event.type == pg.USEREVENT:
-            if event.type in self.listeners:
-                for callback in self.listeners[event.type]:
-                    callback(event)
-        elif event.type == pg.KEYDOWN:
-            for sprite in self.scene.sprites():
-                if hasattr(sprite, 'on_keydown'):
-                    sprite.on_keydown(event)
+        elif event.type in self.listeners:
+            for callback in self.listeners[event.type]:
+                callback(event)
 
     def listen(self, type, f):
         self.listeners[type].append(f)

@@ -1,7 +1,9 @@
 import pygame as pg
 
-from ..engine import g, ReadlineEvent
+from ..events import ReadlineEvent
 from ..font import Font
+from ..font import Wrapper
+from ..globals import g
 from ..readline import Readline
 
 from .base import Sprite
@@ -24,53 +26,72 @@ class ReadlineSprite(Sprite):
         self.caret = CaretSprite()
         self.inside = inside
 
+        self.wrapper = Wrapper()
+
         self.render()
+
+        g.engine.listen(pg.KEYDOWN, self.on_keydown)
+
+    def get_caret_rect(self):
+        crects = self.wrapper(self.font, self.rect, self.text)
+        pos = (len(self.prompt) - 1) + self.readline.position
+        return crects[pos]
 
     def on_keydown(self, event):
         if not self.active:
             return
-
+        rv = None
+        # submit
         if event.key == pg.K_RETURN:
-            value = self.readline.value
-            g.engine.emit(ReadlineEvent(value))
-            self.readline.clear()
+            rv = self.submit()
+        # clear
         elif event.key == pg.K_ESCAPE:
             self.readline.clear()
+        # backspace
         elif event.key == pg.K_BACKSPACE:
             self.readline.backspace()
+        # delete
+        elif event.key == pg.K_DELETE:
+            self.readline.delete()
+        # history
         elif event.key == pg.K_UP:
-            self.readline.history_up()
+            rv = self.readline.history_up()
         elif event.key == pg.K_DOWN:
-            self.readline.history_down()
+            rv = self.readline.history_down()
+        # CTRL+D
+        elif event.key == pg.K_d and event.mod & pg.KMOD_CTRL:
+            g.engine.stop()
+        # move caret
         elif event.key == pg.K_LEFT:
             self.readline.move_left()
         elif event.key == pg.K_RIGHT:
             self.readline.move_right()
+        elif event.key == pg.K_HOME:
+            self.readline.move_start()
+        elif event.key == pg.K_END:
+            self.readline.move_end()
+        # send string through
         else:
-            self.readline.write(event.unicode)
+            self.write(event.unicode)
 
         self.render()
-        self.rect.size = self.image.get_size()
+        return rv
 
     def render(self):
         final = self.font.render(self.text, self.inside)
         self.image = final
+        self.rect.size = self.image.get_size()
         return final
+
+    def submit(self):
+        value = self.readline.submit()
+        g.engine.emit(ReadlineEvent("submit", value))
+        return value
 
     @property
     def text(self):
         "Return the full text, prompt + input"
         return self.prompt + self.readline.value
-
-    def get_caret_rect(self):
-        crects = [pg.Rect(self.rect.topleft,self.font.size(c)) for c in self.text]
-
-        if len(crects) > 1:
-            for cr1, cr2 in zip(crects[:-1], crects[1:]):
-                cr2.bottomleft = cr1.bottomright
-
-            pos = (len(self.prompt) - 1) + (self.readline.position)
-            return crects[pos]
 
     def update(self):
         if self.text:
@@ -79,3 +100,4 @@ class ReadlineSprite(Sprite):
 
     def write(self, data):
         self.readline.write(data)
+        g.engine.emit(ReadlineEvent("write", data))

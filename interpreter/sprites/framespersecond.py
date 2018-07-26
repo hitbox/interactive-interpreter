@@ -1,6 +1,8 @@
+from functools import lru_cache
+
 import pygame as pg
 
-from ..engine import g
+from ..globals import g
 from ..font import Font
 
 from .base import Sprite
@@ -15,7 +17,11 @@ class FramesPerSecondSprite(Sprite):
 
     @property
     def image(self):
-        return self.font.render("%.2f" % self._fps)
+        return self.render("%.2f" % self._fps)
+
+    @lru_cache(None)
+    def render(self, text):
+        return self.font.render(text)
 
     def update(self):
         self._fps = g.clock.get_fps()
