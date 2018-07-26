@@ -4,7 +4,7 @@ import io
 
 class StreamConsole(code.InteractiveInterpreter):
     """
-    Console that writes stdout of runsource to a string, `stream`.
+    A console that writes stdout of runsource to a string, `stream`.
     """
 
     def __init__(self, stream, locals=None, filename="<console>"):
