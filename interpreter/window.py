@@ -2,12 +2,14 @@ import os
 
 import pygame as pg
 
+from .rect import Rect
+
 def get_desktop_rect():
     """
     Return the desktop size as Rect. Call before `pygame.display.set_mode`.
     """
     info = pg.display.Info()
-    return pg.Rect(0,0,info.current_w,info.current_h)
+    return Rect(0,0,info.current_w,info.current_h)
 
 def set_position(position):
     """

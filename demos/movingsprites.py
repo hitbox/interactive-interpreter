@@ -39,9 +39,13 @@ class MovingSpriteScene(BaseScene):
 
         steps = 60
 
+        self.crosshair = Crosshair((100, 100))
+        self.crosshair.rect.center = rightside.center
+        self.add(self.crosshair)
+
         context = dict(g=g, pg=pg, sprite=sprite, s=sprite, positioned=positioned,
                        leftside=leftside, rightside=rightside, steps=steps,
-                       self=self, MovingSprite=MovingSprite, fps=fps)
+                       self=self, MovingSprite=MovingSprite, fps=fps, crosshair=self.crosshair)
 
         banner = ReadlineScene.banner + "\nUp/down for example commands to move the sprite on the right."
         self.subscene = ReadlineScene(leftside.inflate(-100, -100), context, banner=banner)
@@ -66,10 +70,6 @@ class MovingSpriteScene(BaseScene):
             self.hueloaders[hue] = saturationvalue(image, hue)
 
         self.done = set()
-
-        self.crosshair = Crosshair((100, 100))
-        self.crosshair.rect.center = rightside.center
-        self.add(self.crosshair)
 
         self.dirty = True
 

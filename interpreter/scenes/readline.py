@@ -32,7 +32,7 @@ class ReadlineScene(BaseScene):
         self.readlinesprite.rect.topleft = self.inside.topleft
         self.add(self.readlinesprite)
         self.bakes = []
-        self.reverse = []
+        self.history = []
 
         self.console = StreamConsole(io.StringIO(), locals=context)
 
@@ -57,11 +57,11 @@ class ReadlineScene(BaseScene):
         baked = BakedSprite(image, self, position=position)
         self.add(baked)
         self.bakes.append(baked)
-        self.reverse.insert(0, baked)
+        self.history.insert(0, baked)
 
     def _reflow_up(self):
         self.bakes[-1].rect.bottomleft = self.readlinesprite.rect.topleft
-        for b1, b2 in zip(self.reverse[:-1], self.reverse[1:]):
+        for b1, b2 in zip(self.history[:-1], self.history[1:]):
             b2.rect.bottomleft = b1.rect.topleft
         removes = []
         for baked in self.bakes:
@@ -70,7 +70,7 @@ class ReadlineScene(BaseScene):
         for baked in removes:
             self.remove(baked)
             self.bakes.remove(baked)
-            self.reverse.remove(baked)
+            self.history.remove(baked)
 
     def _keep_readline_on_screen(self):
         if self.readlinesprite.rect.bottom > self.inside.bottom:
