@@ -10,6 +10,8 @@ from ..sprites import BakedSprite, ReadlineSprite
 from .base import BaseScene
 
 class ReadlineScene(BaseScene):
+    """
+    """
 
     banner = ("Pygame Interactive Interpreter\n"
               "Close window or `engine.stop()` or `quit()` or CTRL+D to quit.")
@@ -17,6 +19,8 @@ class ReadlineScene(BaseScene):
     def __init__(self, inside, context=None, banner=None):
         """
         :param inside: rect to keep console in.
+        :param type: interpreter.rect.Rect
+
         :param context: console locals.
         :param banner: override default banner.
         """
@@ -26,10 +30,13 @@ class ReadlineScene(BaseScene):
         self.font = Font()
 
         self.inside = inside
+        self.add(self.inside)
+        for handle in self.inside.handles.values():
+            self.add(handle)
 
         self.readlinesprite = ReadlineSprite(">>> ", self.inside)
 
-        self.readlinesprite.rect.topleft = self.inside.topleft
+        #self.readlinesprite.rect.topleft = self.inside.topleft
         self.add(self.readlinesprite)
         self.bakes = []
         self.history = []
@@ -78,7 +85,7 @@ class ReadlineScene(BaseScene):
             self._reflow_up()
 
     def on_userevent(self, event):
-        if event.subtype != "readline":
+        if not hasattr(event, 'subtype') or event.subtype != "readline":
             return
 
         if event.action == "submit":
@@ -101,6 +108,6 @@ class ReadlineScene(BaseScene):
                 self.readlinesprite.render()
 
             last_bake = self.bakes[-1]
-            self.readlinesprite.rect.topleft = last_bake.rect.bottomleft
+            #self.readlinesprite.rect.topleft = last_bake.rect.bottomleft
 
         self._keep_readline_on_screen()

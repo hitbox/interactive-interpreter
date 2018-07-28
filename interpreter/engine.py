@@ -1,3 +1,4 @@
+import logging
 from collections import defaultdict
 
 import pygame as pg
@@ -47,4 +48,4 @@ class Engine(object):
             self.screen.clear()
             self.scene.draw(self.screen.display)
             self.screen.flip()
-        print('engine shut down')
+        logging.getLogger('interpreter.engine').info('engine shut down')

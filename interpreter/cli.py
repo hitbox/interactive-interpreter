@@ -5,8 +5,9 @@ import pygame as pg
 from . import window
 from .engine import Engine
 from .rect import Rect
-from .scenes import ReadlineScene
+from .scenes import ReadlineScene, TextSpriteScene
 from .screens import Screen
+from .sprites import RectSprite
 
 def tuplelizer(s):
     return tuple(map(int, s.split('x')))
@@ -16,7 +17,12 @@ def main():
     Start an interactive python interpreter, in a pygame GUI.
     """
     parser = argparse.ArgumentParser(description=main.__doc__)
-    parser.add_argument('--size', type=tuplelizer, default="1000x900", help='Window size. Default: %(default)s')
+    parser.add_argument(
+        '--size',
+        type = tuplelizer,
+        default = "1000x900",
+        help = 'Window size. Default: %(default)s'
+    )
     parser.add_argument(
         '--align',
         choices = ['topleft', 'midtop', 'topright', 'midright', 'bottomright',
@@ -36,4 +42,7 @@ def main():
     display = Screen(window_rect.size)
 
     e = Engine(display)
-    e.run(ReadlineScene(pg.Rect((0,0), args.size)))
+
+    inside = RectSprite((800, 800))
+    inside.move_ip(50, 50)
+    e.run(TextSpriteScene(inside))

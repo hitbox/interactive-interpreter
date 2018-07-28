@@ -2,7 +2,7 @@ import pygame as pg
 
 from ..events import ReadlineEvent
 from ..font import Font
-from ..font import Wrapper
+from ..font import wrap
 from ..globals import g
 from ..readline import Readline
 
@@ -10,30 +10,30 @@ from .base import Sprite
 from .caret import CaretSprite
 
 class ReadlineSprite(Sprite):
-
-    def __init__(self, prompt, inside):
-        super().__init__()
+    """
+    """
+    def __init__(self, prompt, inside, *groups):
+        super().__init__(*groups)
 
         self.font = Font()
         self.prompt = prompt
 
         size = self.font.size("X")
-        self.rect = pg.Rect((0,0),size)
 
         self.active = True
         self.readline = Readline()
 
-        self.caret = CaretSprite()
         self.inside = inside
+        self.rect = self.inside
 
-        self.wrapper = Wrapper()
+        self.caret = CaretSprite()
 
         self.render()
 
         g.engine.listen(pg.KEYDOWN, self.on_keydown)
 
     def get_caret_rect(self):
-        crects = self.wrapper(self.font, self.rect, self.text)
+        crects = wrap(self.font, self.inside, self.text)
         pos = (len(self.prompt) - 1) + self.readline.position
         return crects[pos]
 
@@ -53,7 +53,7 @@ class ReadlineSprite(Sprite):
         # delete
         elif event.key == pg.K_DELETE:
             self.readline.delete()
-        # history
+        # history up/down
         elif event.key == pg.K_UP:
             rv = self.readline.history_up()
         elif event.key == pg.K_DOWN:
@@ -80,7 +80,6 @@ class ReadlineSprite(Sprite):
     def render(self):
         final = self.font.render(self.text, self.inside)
         self.image = final
-        self.rect.size = self.image.get_size()
         return final
 
     def submit(self):
