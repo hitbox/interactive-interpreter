@@ -9,7 +9,7 @@ from .scenes import ReadlineScene, TextSpriteScene
 from .screens import Screen
 from .sprites import RectSprite
 
-def tuplelizer(s):
+def Size(s):
     return tuple(map(int, s.split('x')))
 
 def main():
@@ -29,7 +29,7 @@ def main():
     )
     parser.add_argument(
         '--size',
-        type = tuplelizer,
+        type = Size,
         default = "1000x900",
         help = 'Window size. Default: %(default)s'
     )
@@ -38,7 +38,7 @@ def main():
         choices = ['topleft', 'midtop', 'topright', 'midright', 'bottomright',
                    'midbottom', 'bottomleft', 'midleft'],
         default = 'midright',
-        help='Align window to desktop. Default: %(default)s'
+        help = 'Align window to desktop. Default: %(default)s'
     )
     args = parser.parse_args()
 
