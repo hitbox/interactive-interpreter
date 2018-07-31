@@ -17,6 +17,16 @@ def main():
     Start an interactive python interpreter, in a pygame GUI.
     """
     parser = argparse.ArgumentParser(description=main.__doc__)
+    scenemap = {
+        'readline': ReadlineScene,
+        'textsprite': TextSpriteScene,
+    }
+    parser.add_argument(
+        '--scene',
+        choices = list(scenemap),
+        default = 'readline',
+        help = 'The scene to run. Default: %(default)s'
+    )
     parser.add_argument(
         '--size',
         type = tuplelizer,
@@ -45,4 +55,7 @@ def main():
 
     inside = RectSprite((800, 800))
     inside.move_ip(50, 50)
-    e.run(TextSpriteScene(inside))
+
+    scene_class = scenemap[args.scene]
+
+    e.run(scene_class(inside))
